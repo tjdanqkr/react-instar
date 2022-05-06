@@ -1,0 +1,17 @@
+.Menubar {
+    position: fixed;
+    bottom: 0%;
+    height: 10%;
+    width: 100%;
+}
+.MenuContainer {
+    display: flex;
+    justify-content: space-around;
+    height: 100%;
+    align-content: center;
+    align-items: center;
+    border: 1px solid whitesmoke;
+}
+.Icon {
+    text-align: center;
+}

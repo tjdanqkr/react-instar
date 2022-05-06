@@ -9,7 +9,6 @@ const AuthRouter = () => {
     const navigate = useNavigate();
     const location = useLocation();
     useEffect(() => {
-        console.log(users);
         const id = localStorage.getItem("id");
         const findUser = users.find((data) => data.id === Number(id));
         if (!findUser) {
