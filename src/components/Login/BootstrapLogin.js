@@ -6,9 +6,7 @@ import AuthRouter from "../AuthRouter";
 import "./Login.css";
 import { Users } from "./User";
 const BootstrapLogin = () => {
-    const { users } = useContext(UserContext);
     const [isFail, setIsFail] = useState(false);
-
     const [user, setUser] = useState({
         id: "",
         password: "",
@@ -18,6 +16,7 @@ const BootstrapLogin = () => {
         setUser({ ...user, [name]: value });
     };
     const navigate = useNavigate();
+    const { users } = useContext(UserContext);
     const onSubmitLogin = (e) => {
         e.preventDefault();
         const findUser = users.find((data) => data.userId === user.id && data.password === user.password);
