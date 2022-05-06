@@ -17,7 +17,7 @@ function App() {
     };
 
     return (
-        <UserContext value={(users, insertUsers)}>
+        <UserContext.Provider value={{ users, insertUsers }}>
             <BrowserRouter>
                 <Routes>
                     <Route index path="/" element={<Main></Main>}></Route>
@@ -26,7 +26,7 @@ function App() {
                     <Route path="/*" element={<Page404></Page404>}></Route>
                 </Routes>
             </BrowserRouter>
-        </UserContext>
+        </UserContext.Provider>
     );
 }
 

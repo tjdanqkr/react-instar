@@ -7,7 +7,6 @@ import { Users } from "../Login/User";
 import "./Join.css";
 
 const Join = () => {
-    const { insertUsers, users } = useContext(UserContext);
     const [isFail, setIsFail] = useState(false);
     const [text, setText] = useState("");
     const [user, setUser] = useState({
@@ -16,9 +15,10 @@ const Join = () => {
         name: "",
     });
     const navigate = useNavigate();
+    const { insertUsers, users } = useContext(UserContext);
     const onSubmitLogin = (e) => {
         e.preventDefault();
-        const findUser = Users.find((data) => data.userId === user.id);
+        const findUser = users.find((data) => data.userId === user.id);
         if (findUser) {
             //아이디 존재
             openAlert("이미 존재하는 아이디");
@@ -36,8 +36,8 @@ const Join = () => {
             openAlert("이름를 입력해주세요");
             return;
         } else {
-            Users.push({ ...user, userId: user.id, id: Users.length });
-            localStorage.setItem("id", Users.length);
+            insertUsers(user);
+            localStorage.setItem("id", users.length);
             navigate("/");
         }
     };

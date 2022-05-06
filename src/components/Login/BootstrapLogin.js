@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation, useHref } from "react-router-dom";
 import { Alert, Button, Col, Container, Form, Input, Row } from "reactstrap";
+import { UserContext } from "../../store/UserContext";
 import AuthRouter from "../AuthRouter";
 import "./Login.css";
 import { Users } from "./User";
 const BootstrapLogin = () => {
+    const { users } = useContext(UserContext);
     const [isFail, setIsFail] = useState(false);
 
     const [user, setUser] = useState({
@@ -18,7 +20,7 @@ const BootstrapLogin = () => {
     const navigate = useNavigate();
     const onSubmitLogin = (e) => {
         e.preventDefault();
-        const findUser = Users.find((data) => data.userId === user.id && data.password === user.password);
+        const findUser = users.find((data) => data.userId === user.id && data.password === user.password);
         if (findUser) {
             //로그인 후 로직
             localStorage.setItem("id", findUser.id);

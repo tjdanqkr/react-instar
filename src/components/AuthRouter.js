@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../store/UserContext";
 import { Users } from "./Login/User";
 
 const AuthRouter = () => {
+    const { users } = useContext(UserContext);
+
     const navigate = useNavigate();
     const location = useLocation();
     useEffect(() => {
+        console.log(users);
         const id = localStorage.getItem("id");
-        const findUser = Users.find((data) => data.id === Number(id));
+        const findUser = users.find((data) => data.id === Number(id));
         if (!findUser) {
             const from =
                 location.pathname === "/login" || location.pathname === "/join" //
