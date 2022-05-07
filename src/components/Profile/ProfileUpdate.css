@@ -1,0 +1,14 @@
+.profileUpdateForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+.profileUpdateHeader {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid whitesmoke;
+    margin-bottom: 3em;
+}
