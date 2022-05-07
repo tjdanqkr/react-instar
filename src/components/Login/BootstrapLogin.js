@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation, useHref } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Col, Container, Form, Input, Row } from "reactstrap";
 import { UserContext } from "../../store/UserContext";
 import AuthRouter from "../AuthRouter";
 import "./Login.css";
-import { Users } from "./User";
 const BootstrapLogin = () => {
     const [isFail, setIsFail] = useState(false);
     const [user, setUser] = useState({

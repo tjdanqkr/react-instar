@@ -1,0 +1,11 @@
+.ProfileHeaderBox {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    border: 1px solid whitesmoke;
+    position: fixed;
+    width: 100%;
+    background-color: white;
+    height: 10%;
+    align-items: center;
+}

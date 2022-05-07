@@ -1,14 +1,14 @@
-import { createContext, useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import AuthRouter from "./components/AuthRouter";
 import Join from "./components/Join/Join";
 import BootstrapLogin from "./components/Login/BootstrapLogin";
-import { Users } from "./components/Login/User";
+import { Users } from "./data/User";
 import Main from "./components/Main/Main";
 import Page404 from "./components/Page404";
 import { UserContext } from "./store/UserContext";
 import Layout from "./components/Layout/Layout";
+import Profile from "./components/Profile/Profile";
 
 function App() {
     const [users, setUsers] = useState(Users);
@@ -24,6 +24,7 @@ function App() {
                     <Route path="/" element={<Layout></Layout>}>
                         <Route index element={<Main></Main>}></Route>
                         <Route path="shopping" element={<Main></Main>}></Route>
+                        <Route path="profile" element={<Profile></Profile>}></Route>
                     </Route>
                     <Route path="/login" element={<BootstrapLogin></BootstrapLogin>}></Route>
                     <Route path="/join" element={<Join></Join>}></Route>

@@ -1,17 +1,16 @@
 import { Outlet } from "react-router-dom";
-import { Container } from "reactstrap";
 import AuthRouter from "../AuthRouter";
 import Menubar from "./Menubar";
 
 const Layout = () => {
     return (
-        <>
+        <div>
             <AuthRouter></AuthRouter>
-            <Container fluid="md">
-                <Outlet />
-            </Container>
+
+            <Outlet />
+
             <Menubar></Menubar>
-        </>
+        </div>
     );
 };
 
