@@ -1,0 +1,44 @@
+.profileBoard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.profileBoardImgBox {
+    cursor: pointer;
+}
+
+.profileBoardImg {
+    width: 100%;
+    height: 100%;
+}
+.profileBoardModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1em;
+    border: 1px solid whitesmoke;
+    margin-bottom: 4em;
+}
+.profileBoardBodyHeader {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+.profileBoardBodyHeaderImgBox {
+    width: 4em;
+    height: 4em;
+}
+.profileBoardBodyHeaderImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 2em;
+}
+.profileBoardBody {
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+}
+.profileBoardBodyImg {
+    width: 100%;
+    height: auto;
+}
