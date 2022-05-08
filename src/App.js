@@ -37,6 +37,10 @@ function App() {
         const newPost = { ...post, userId: Number(localStorage.getItem("id")), id: posts.length };
         setPosts([...posts, newPost]);
     };
+    const deletePost = (postId) => {
+        const delPosts = posts.filter((post) => post.id !== postId);
+        setPosts(delPosts);
+    };
     const [follows, setFollows] = useState(Follow);
     const insertFollow = (followerId) => {
         const newFollow = { following: Number(localStorage.getItem("id")), follower: followerId };
@@ -45,7 +49,7 @@ function App() {
 
     return (
         <UserContext.Provider value={{ users, insertUsers, updateUsers }}>
-            <PostContext.Provider value={{ posts, insertPost }}>
+            <PostContext.Provider value={{ posts, insertPost, deletePost }}>
                 <FollowContext.Provider value={{ follows, insertFollow }}>
                     <BrowserRouter>
                         <Routes>

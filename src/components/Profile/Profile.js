@@ -14,7 +14,7 @@ const Profile = () => {
         return users.find((user) => id === user.id);
     };
     const { name, img } = getUser();
-    const { posts } = useContext(PostContext);
+    const { posts, deletePost } = useContext(PostContext);
     const { follows } = useContext(FollowContext);
     const myPosts = () => {
         return posts.filter((post) => post.userId === id);
@@ -31,7 +31,7 @@ const Profile = () => {
             <ProfileHeader name={name}></ProfileHeader>
             <Container className="ProfileContainer">
                 <ProfileBody img={img} follower={myFollower()} following={myFollowing()} posts={myPosts()} name={name}></ProfileBody>
-                <ProfileBoard posts={myPosts()} name={name} img={img}></ProfileBoard>
+                <ProfileBoard posts={myPosts()} name={name} img={img} deletePost={deletePost}></ProfileBoard>
             </Container>
         </>
     );
