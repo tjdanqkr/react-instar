@@ -1,16 +1,17 @@
-.profileBoard {
+.Posts {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
-.profileBoardImgBox {
+.PostsImgBox {
     cursor: pointer;
 }
 
-.profileBoardImg {
+.PostsImg {
     width: 100%;
     height: 100%;
+    aspect-ratio: 1;
 }
-.profileBoardModalHeader {
+.PostsModalHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -19,26 +20,26 @@
     border: 1px solid whitesmoke;
     margin-bottom: 4em;
 }
-.profileBoardBodyHeader {
+.PostsBodyHeader {
     display: flex;
     align-items: center;
     gap: 1em;
 }
-.profileBoardBodyHeaderImgBox {
+.PostsBodyHeaderImgBox {
     width: 4em;
     height: 4em;
 }
-.profileBoardBodyHeaderImg {
+.PostsBodyHeaderImg {
     width: 100%;
     height: 100%;
     border-radius: 2em;
 }
-.profileBoardBody {
+.PostsBody {
     display: flex;
     gap: 1em;
     flex-direction: column;
 }
-.profileBoardBodyImg {
+.PostsBodyImg {
     width: 100%;
     height: auto;
 }

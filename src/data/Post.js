@@ -8,7 +8,7 @@ export const Post = [
     {
         id: 1,
         userId: 0,
-        img: "/img/post/3webp",
+        img: "/img/post/3.webp",
         content: "user 0 안녕하세요2",
     },
     {
