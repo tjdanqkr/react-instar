@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Users } from "../data/User";
-import { checkId, getUserById, getUserByUserId, loginApi, postUser } from "./usersApi";
+import { checkId, getUserById, getUserByUserId, loginApi, logoutApi, postUser } from "./usersApi";
 const initialState = {
     users: Users,
     myId: localStorage.getItem("id"),
@@ -14,6 +14,7 @@ const LOGIN = "LOGIN";
 const INSERT_USER = "INSERT_USER";
 const SELECT_USER_BY_ID = "SELECT_USER_BY_ID";
 const SELECT_USER_BY_USERID = "SELECT_USER_BY_USERID";
+const LOGOUT = "LOGOUT";
 
 export const getCheckId = createAsyncThunk(CHECK_ID, async (userId, thunkAPI) => {
     const { users } = thunkAPI.getState().users;
@@ -49,6 +50,12 @@ export const selectUserByUserId = createAsyncThunk(SELECT_USER_BY_USERID, async 
     return newUser;
 });
 
+export const logout = createAsyncThunk(LOGOUT, async (payload, thunkAPI) => {
+    const { myId } = thunkAPI.getState().users;
+    const isLogout = await logoutApi(myId);
+    return isLogout;
+});
+
 export const usersSlice = createSlice({
     name: "users",
     initialState,
@@ -65,13 +72,17 @@ export const usersSlice = createSlice({
             .addCase(login.fulfilled, (state, { payload }) => {
                 if (payload.isLogin) {
                     localStorage.setItem("id", payload.user.id);
-                    return { ...state, isLogin: payload.login, me: payload.user };
+                    return { ...state, isLogin: payload.login, me: payload.user, myId: payload.user.id };
                 } else {
                     return { ...state, isLogin: false };
                 }
             })
             .addCase(insertUser.fulfilled, (state, { payload }) => {
                 return { ...state, users: payload };
+            })
+            .addCase(logout.fulfilled, (state, { payload }) => {
+                localStorage.removeItem("id");
+                return { ...state, isLogin: false, me: {}, myId: "" };
             });
     },
 });

@@ -22,3 +22,7 @@ export const checkId = async (users, userId) => {
     const isCheckId = (await users.find((user) => user.userId === userId)) ? true : false;
     return isCheckId;
 };
+
+export const logoutApi = async (userId) => {
+    return true;
+};
