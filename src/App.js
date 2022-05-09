@@ -14,6 +14,8 @@ import { PostContext } from "./store/PostContext";
 import { Follow } from "./data/Follow";
 import { FollowContext } from "./store/FollowContext";
 import Search from "./components/Search/Search";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 function App() {
     const [users, setUsers] = useState(Users);

@@ -1,11 +1,13 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Col, Container, Form, Input, Row, Button, Alert } from "reactstrap";
-import { UserContext } from "../../store/UserContext";
+import { getCheckId, insertUser, login } from "../../store/users";
 import AuthRouter from "../AuthRouter";
 import "./Join.css";
 
 const Join = () => {
+    const dispatch = useDispatch();
     const [isFail, setIsFail] = useState(false);
     const [text, setText] = useState("");
     const [user, setUser] = useState({
@@ -14,15 +16,11 @@ const Join = () => {
         name: "",
     });
     const navigate = useNavigate();
-    const { insertUsers, users } = useContext(UserContext);
-    const onSubmitLogin = (e) => {
+    // const { insertUsers, users } = useContext(UserContext);
+    const onSubmitLogin = async (e) => {
         e.preventDefault();
-        const findUser = users.find((data) => data.userId === user.id);
-        if (findUser) {
-            //아이디 존재
-            openAlert("이미 존재하는 아이디");
-            return;
-        } else if (user.id === "") {
+        // const findUser = users.find((data) => data.userId === user.id);
+        if (user.id === "") {
             // id is null
             openAlert("아이디를 입력해주세요");
             return;
@@ -34,12 +32,19 @@ const Join = () => {
             // name is null
             openAlert("이름를 입력해주세요");
             return;
+        }
+        const check = await dispatch(getCheckId(user.id)).unwrap();
+
+        if (check) {
+            openAlert("이미 존재하는 아이디");
+            return;
         } else {
-            insertUsers(user);
-            localStorage.setItem("id", users.length);
+            await dispatch(insertUser(user));
+            await dispatch(login(user));
             navigate("/");
         }
     };
+
     const openAlert = (text) => {
         setIsFail(true);
         setText(text);
