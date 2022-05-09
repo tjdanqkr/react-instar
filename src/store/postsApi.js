@@ -19,7 +19,7 @@ export const getPostByUserId = async (posts, userId) => {
 
 export const postPost = async (posts, post) => {
     try {
-        const newPost = { ...post, postId: post.id, id: posts.length };
+        const newPost = { ...post, id: posts.length };
         return [...posts, newPost];
     } catch (error) {
         throw error;

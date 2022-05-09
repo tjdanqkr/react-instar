@@ -9,23 +9,29 @@ import { FollowContext } from "../../store/FollowContext";
 import Posts from "../Posts/Posts";
 import { useDispatch, useSelector } from "react-redux";
 import { selectMyPost } from "../../store/posts";
+import { selectMyFollower, selectMyFollowing } from "../../store/follows";
 const Profile = () => {
     const { name, img, id } = useSelector((state) => state.users.me);
     const myPosts = useSelector((state) => state.posts.myPosts);
-    const { follows } = useContext(FollowContext);
+    const follower = useSelector((state) => state.follows.myFollower);
+    const following = useSelector((state) => state.follows.myFollowing);
     const dispatch = useDispatch();
     const getMyPost = () => {
         dispatch(selectMyPost());
     };
-    useEffect(() => {
-        getMyPost();
-    }, []);
     const myFollower = () => {
-        return follows.filter((follow) => follow.following === id);
+        dispatch(selectMyFollower());
+        // return follows.filter((follow) => follow.following === id);
     };
     const myFollowing = () => {
-        return follows.filter((follow) => follow.follower === id);
+        dispatch(selectMyFollowing());
+        // return follows.filter((follow) => follow.follower === id);
     };
+    useEffect(() => {
+        getMyPost();
+        myFollower();
+        myFollowing();
+    }, []);
 
     return (
         <>
@@ -33,9 +39,9 @@ const Profile = () => {
             <Container className="ProfileContainer">
                 <ProfileBody
                     img={img} //
-                    follower={myFollower()}
-                    following={myFollowing()}
-                    posts={myPosts.posts}
+                    follower={follower}
+                    following={following}
+                    posts={myPosts}
                     name={name}
                 ></ProfileBody>
                 <Posts posts={myPosts.posts} name={name} img={img} postState={myPosts}></Posts>
@@ -43,5 +49,4 @@ const Profile = () => {
         </>
     );
 };
-
 export default Profile;

@@ -1,18 +1,28 @@
-import { useContext, useState } from "react";
-import { useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { Button, Container, Modal, Spinner } from "reactstrap";
 import { deletePost, selectMyPost, selectOtherPost } from "../../store/posts";
 import { UserContext } from "../../store/UserContext";
+import { selectUserById } from "../../store/users";
 import "./Posts.css";
 const Posts = ({ postState, posts }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [clickPost, setClickPost] = useState();
+    const [postUser, setPostUser] = useState();
     const dispatch = useDispatch();
     const location = useLocation();
     const openModal = (post) => {
-        setClickPost(post);
-        setIsOpen(true);
+        dispatch(selectUserById(post.userId))
+            .unwrap()
+            .then((result) => {
+                setPostUser(result);
+            })
+            .finally(() => {
+                setClickPost(post);
+                setIsOpen(true);
+            });
     };
     const closeModal = () => {
         setClickPost();
@@ -21,7 +31,6 @@ const Posts = ({ postState, posts }) => {
     const onClickDelete = (postId) => {
         dispatch(deletePost(postId));
         dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
-
         setIsOpen(false);
     };
 
@@ -51,6 +60,7 @@ const Posts = ({ postState, posts }) => {
                     clickPost={clickPost}
                     closeModal={closeModal}
                     onClickDelete={onClickDelete}
+                    user={postUser}
                 ></PostDetail>
             ) : null}
         </div>
@@ -58,13 +68,8 @@ const Posts = ({ postState, posts }) => {
 };
 export default Posts;
 
-const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete }) => {
-    const { users } = useContext(UserContext);
-    const getUser = () => {
-        return users.find((user) => user.id === clickPost.userId);
-    };
-    const user = getUser();
-    const myId = Number(localStorage.getItem("id"));
+const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
+    const myId = useSelector((state) => state.users.myId);
     return (
         <Modal isOpen={isOpen} fullscreen toggle={closeModal}>
             <div className="PostsModalHeader">
