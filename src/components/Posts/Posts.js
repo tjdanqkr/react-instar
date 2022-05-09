@@ -1,10 +1,15 @@
 import { useContext, useState } from "react";
-import { Button, Container, Modal } from "reactstrap";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { Button, Container, Modal, Spinner } from "reactstrap";
+import { deletePost, selectMyPost, selectOtherPost } from "../../store/posts";
 import { UserContext } from "../../store/UserContext";
 import "./Posts.css";
-const Posts = ({ posts, deletePost }) => {
+const Posts = ({ postState, posts }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [clickPost, setClickPost] = useState();
+    const dispatch = useDispatch();
+    const location = useLocation();
     const openModal = (post) => {
         setClickPost(post);
         setIsOpen(true);
@@ -14,26 +19,32 @@ const Posts = ({ posts, deletePost }) => {
         setIsOpen(false);
     };
     const onClickDelete = (postId) => {
-        deletePost(postId);
+        dispatch(deletePost(postId));
+        dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
+
         setIsOpen(false);
     };
 
     return (
         <div className="Posts">
-            {posts?.map((post) => (
-                <div
-                    className="PostsImgBox" //
-                    onClick={() => openModal(post)}
-                    key={post.id}
-                >
-                    <img
-                        className="PostsImg" //
+            {postState.loading ? (
+                <Spinner>Loading...</Spinner>
+            ) : (
+                posts?.map((post) => (
+                    <div
+                        className="PostsImgBox" //
+                        onClick={() => openModal(post)}
                         key={post.id}
-                        src={post.img}
-                        alt={post.content}
-                    ></img>
-                </div>
-            ))}
+                    >
+                        <img
+                            className="PostsImg" //
+                            key={post.id}
+                            src={post.img}
+                            alt={post.content}
+                        ></img>
+                    </div>
+                ))
+            )}
             {clickPost ? (
                 <PostDetail
                     isOpen={isOpen} //

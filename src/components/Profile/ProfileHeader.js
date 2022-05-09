@@ -19,6 +19,9 @@ const ProfileHeader = ({ name }) => {
                 <h2>{name}</h2>
             </div>
             <div>
+                <Button outline>
+                    <GoDiffAdded size={30}></GoDiffAdded>
+                </Button>
                 <Button outline onClick={onClickLogout}>
                     <BiLogOut size={30}></BiLogOut>
                 </Button>

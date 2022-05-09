@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Users } from "../data/User";
-import { checkId, getUserById, getUserByUserId, loginApi, logoutApi, postUser } from "./usersApi";
+import { checkId, getUserById, getUserByKey, getUserByUserId, loginApi, logoutApi, postUser, putUsers } from "./usersApi";
 const initialState = {
     users: Users,
     myId: localStorage.getItem("id"),
@@ -15,6 +15,8 @@ const INSERT_USER = "INSERT_USER";
 const SELECT_USER_BY_ID = "SELECT_USER_BY_ID";
 const SELECT_USER_BY_USERID = "SELECT_USER_BY_USERID";
 const LOGOUT = "LOGOUT";
+const UPDATE_USERS = "UPDATE_USERS";
+const SELECT_USER_BY_KEY = "SELECT_USER_BY_KEY";
 
 export const getCheckId = createAsyncThunk(CHECK_ID, async (userId, thunkAPI) => {
     const { users } = thunkAPI.getState().users;
@@ -23,6 +25,9 @@ export const getCheckId = createAsyncThunk(CHECK_ID, async (userId, thunkAPI) =>
 export const loginCheck = createAsyncThunk(LOGIN_CHECK, async (payload, thunkAPI) => {
     const { users, myId } = thunkAPI.getState().users;
     if (myId) {
+        const me = await getUserById(users, Number(myId));
+        return me;
+    } else if (myId === 0 || myId === "0") {
         const me = await getUserById(users, Number(myId));
         return me;
     }
@@ -55,6 +60,18 @@ export const logout = createAsyncThunk(LOGOUT, async (payload, thunkAPI) => {
     const isLogout = await logoutApi(myId);
     return isLogout;
 });
+export const updateUsers = createAsyncThunk(UPDATE_USERS, async (user, thunkAPI) => {
+    const { myId, users } = thunkAPI.getState().users;
+    const newUsers = await putUsers(users, user, myId);
+    return { newUsers, user };
+});
+export const selectUserByKey = createAsyncThunk(SELECT_USER_BY_KEY, async (key, thunkAPI) => {
+    const { users } = thunkAPI.getState().users;
+    const reg = new RegExp(key, "g");
+    const newUsers = await getUserByKey(users, reg);
+
+    return newUsers.id;
+});
 
 export const usersSlice = createSlice({
     name: "users",
@@ -83,6 +100,11 @@ export const usersSlice = createSlice({
             .addCase(logout.fulfilled, (state, { payload }) => {
                 localStorage.removeItem("id");
                 return { ...state, isLogin: false, me: {}, myId: "" };
+            })
+            .addCase(updateUsers.fulfilled, (state, { payload }) => {
+                const { newUsers, user } = payload;
+
+                return { ...state, me: { ...state.me, ...user }, users: newUsers };
             });
     },
 });
