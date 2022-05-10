@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import { Post } from "../data/Post";
-import { deletePostById, getPostByKey, getPostByOther, getPostByUserId, postPost } from "./postsApi";
+import { selectMyFollower, selectMyFollowing } from "./follows";
+import { deletePostById, getPostByKey, getPostByOther, getPostByUserId, getPostMain, postPost } from "./postsApi";
 const initialState = {
     posts: Post,
     myPosts: {
@@ -13,6 +15,11 @@ const initialState = {
         loading: false,
         message: "",
     },
+    mainPosts: {
+        posts: [],
+        loading: false,
+        message: "",
+    },
 };
 
 const SELECT_MY_POST = "SELECT_MY_POST";
@@ -21,6 +28,7 @@ const UPDATE_POST = "UPDATE_POST";
 const DELETE_POST = "DELETE_POST";
 const INSERT_POST = "INSERT_POST";
 const SELECT_POST_BY_KEY = "SELECT_POST_BY_KEY";
+const SELECT_POST_MAIN = "SELECT_POST_MAIN";
 
 export const selectMyPost = createAsyncThunk(SELECT_MY_POST, async (payload, thunkAPI) => {
     const { myId } = thunkAPI.getState().users;
@@ -75,6 +83,15 @@ export const insertPosts = createAsyncThunk(
         return myPosts;
     }
 );
+export const selectPostMain = createAsyncThunk(SELECT_POST_MAIN, async (payload, thunkAPI) => {
+    const { posts } = thunkAPI.getState().posts;
+    const { follows } = thunkAPI.getState().follows.myFollower;
+    const { users } = thunkAPI.getState().users;
+
+    const myPosts = await getPostMain(posts, follows, users);
+    return myPosts;
+});
+
 export const postsSlice = createSlice({
     name: "posts",
     initialState,
@@ -152,6 +169,23 @@ export const postsSlice = createSlice({
             })
             .addCase(insertPosts.fulfilled, (state, { payload }) => {
                 return { ...state, posts: payload };
+            })
+            .addCase(selectPostMain.pending, (state, { payload }) => {
+                const mainPosts = { ...state.mainPosts };
+                mainPosts.loading = true;
+                return { ...state, mainPosts };
+            })
+            .addCase(selectPostMain.fulfilled, (state, { payload }) => {
+                const mainPosts = { ...state.mainPosts };
+                mainPosts.loading = false;
+                mainPosts.posts = payload;
+                return { ...state, mainPosts };
+            })
+            .addCase(selectPostMain.rejected, (state, { error }) => {
+                const mainPosts = { ...state.mainPosts };
+                mainPosts.loading = false;
+                mainPosts.message = error.message;
+                return { ...state, mainPosts };
             });
     },
 });

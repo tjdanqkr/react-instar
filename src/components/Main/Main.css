@@ -1,0 +1,19 @@
+.mainHeader {
+    display: flex;
+    justify-content: space-between;
+    height: 10vh;
+    padding: 1em;
+    border: 1px solid whitesmoke;
+}
+.mainImgBox {
+    height: 100%;
+}
+.mainLogo {
+    height: 100%;
+    width: auto;
+}
+.mainCard {
+    margin: 1em;
+    padding: 1em;
+    gap: 1em;
+}
