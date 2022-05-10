@@ -70,7 +70,6 @@ export default Posts;
 
 const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
     const myId = Number(useSelector((state) => state.users.myId));
-
     return (
         <Modal isOpen={isOpen} fullscreen toggle={closeModal}>
             <div className="PostsModalHeader">
