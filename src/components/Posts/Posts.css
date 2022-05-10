@@ -1,6 +1,7 @@
 .Posts {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    padding-bottom: 10%;
 }
 .PostsImgBox {
     cursor: pointer;

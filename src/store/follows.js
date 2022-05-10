@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Follow } from "../data/Follow";
-import { deleteFollowing, getFollowerByMe, getFollowingByMe, postFollower } from "./followsApi";
+import { deleteFollowing, getFollowerByMe, getFollowingByMe, getFollowingByMeOne, postFollower } from "./followsApi";
 const initialState = {
     follows: Follow,
     myFollowing: {
@@ -19,7 +19,7 @@ const SELECT_MY_FOLLOWER = "SELECT_MY_FOLLOWER";
 const SELECT_MY_FOLLOWERING = "SELECT_MY_FOLLOWERING";
 const DELETE_FOLLOWING = "DELETE_FOLLOWING";
 const INSERT_FOLLOWING = "INSERT_FOLLOWING";
-
+const SELECT_MY_FOLLOWING_ONE = "SELECT_MY_FOLLOWING_ONE";
 export const selectMyFollower = createAsyncThunk(SELECT_MY_FOLLOWER, async (payload, thunkAPI) => {
     const { myId } = thunkAPI.getState().users;
     const { follows } = thunkAPI.getState().follows;
@@ -49,7 +49,7 @@ export const selectMyFollowing = createAsyncThunk(SELECT_MY_FOLLOWERING, async (
 export const deleteFollow = createAsyncThunk(DELETE_FOLLOWING, async (payload, thunkAPI) => {
     const { follows } = thunkAPI.getState().follows;
     const { myId } = thunkAPI.getState().users;
-    return deleteFollowing(follows, myId, payload);
+    return await deleteFollowing(follows, Number(myId), payload);
 });
 
 export const insertFollowing = createAsyncThunk(INSERT_FOLLOWING, async (payload, thunkAPI) => {
@@ -60,8 +60,23 @@ export const insertFollowing = createAsyncThunk(INSERT_FOLLOWING, async (payload
     } else if (myId === 0 || myId === "0") {
         const myfollows = await postFollower(Number(myId), payload);
         return myfollows;
+    } else {
+        return;
     }
-    return;
+});
+export const selectMyFollowingOne = createAsyncThunk(SELECT_MY_FOLLOWING_ONE, async (payload, thunkAPI) => {
+    const { myId } = thunkAPI.getState().users;
+    const { follows } = thunkAPI.getState().follows;
+    const userId = payload;
+    if (myId) {
+        const myfollows = await getFollowingByMeOne(follows, Number(myId), userId);
+        return myfollows ? true : false;
+    } else if (myId === 0 || myId === "0") {
+        const myfollows = await getFollowingByMeOne(follows, Number(myId), userId);
+        return myfollows ? true : false;
+    } else {
+        return;
+    }
 });
 
 export const followsSlice = createSlice({
@@ -78,8 +93,7 @@ export const followsSlice = createSlice({
                 return { ...state };
             })
             .addCase(deleteFollow.fulfilled, (state, { payload }) => {
-                const newFollows = [...state.follows, payload];
-                return { ...state, follows: newFollows };
+                return { ...state, follows: payload };
             })
             .addCase(deleteFollow.rejected, (state, { error }) => {
                 return { ...state };
