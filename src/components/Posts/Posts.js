@@ -1,45 +1,67 @@
-import { useContext, useState } from "react";
-import { Button, Container, Modal } from "reactstrap";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { Button, Container, Modal, Spinner } from "reactstrap";
+import { deleteFollow, insertFollowing, selectMyFollowingOne } from "../../store/follows";
+import { deletePost, selectMyPost, selectOtherPost } from "../../store/posts";
 import { UserContext } from "../../store/UserContext";
+import { selectUserById } from "../../store/users";
 import "./Posts.css";
-const Posts = ({ posts, deletePost }) => {
+const Posts = ({ postState, posts }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [clickPost, setClickPost] = useState();
+    const [postUser, setPostUser] = useState();
+    const dispatch = useDispatch();
+    const location = useLocation();
     const openModal = (post) => {
-        setClickPost(post);
-        setIsOpen(true);
+        dispatch(selectUserById(post.userId))
+            .unwrap()
+            .then((result) => {
+                setPostUser(result);
+            })
+            .finally(() => {
+                setClickPost(post);
+                setIsOpen(true);
+            });
     };
     const closeModal = () => {
         setClickPost();
         setIsOpen(false);
     };
-    const onClickDelete = (postId) => {
-        deletePost(postId);
+    const onClickDelete = async (postId) => {
+        await dispatch(deletePost(postId));
+        await dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
         setIsOpen(false);
     };
 
     return (
         <div className="Posts">
-            {posts?.map((post) => (
-                <div
-                    className="PostsImgBox" //
-                    onClick={() => openModal(post)}
-                    key={post.id}
-                >
-                    <img
-                        className="PostsImg" //
+            {postState.loading ? (
+                <Spinner>Loading...</Spinner>
+            ) : (
+                posts?.map((post) => (
+                    <div
+                        className="PostsImgBox" //
+                        onClick={() => openModal(post)}
                         key={post.id}
-                        src={post.img}
-                        alt={post.content}
-                    ></img>
-                </div>
-            ))}
+                    >
+                        <img
+                            className="PostsImg" //
+                            key={post.id}
+                            src={`http://localhost:8000${post.img}`}
+                            alt={post.content}
+                        ></img>
+                    </div>
+                ))
+            )}
             {clickPost ? (
                 <PostDetail
                     isOpen={isOpen} //
                     clickPost={clickPost}
                     closeModal={closeModal}
                     onClickDelete={onClickDelete}
+                    user={postUser}
                 ></PostDetail>
             ) : null}
         </div>
@@ -47,22 +69,38 @@ const Posts = ({ posts, deletePost }) => {
 };
 export default Posts;
 
-const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete }) => {
-    const { users } = useContext(UserContext);
-    const getUser = () => {
-        return users.find((user) => user.id === clickPost.userId);
+const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
+    const myId = Number(useSelector((state) => state.users.myId));
+    const dispatch = useDispatch();
+    const [isMyFollowing, setIsMyFollowing] = useState(false);
+    const postFollowData = () => {
+        dispatch(selectMyFollowingOne(user.id))
+            .unwrap()
+            .then((res) => {
+                setIsMyFollowing(res);
+            });
     };
-    const user = getUser();
-    const myId = Number(localStorage.getItem("id"));
+    useEffect(() => {
+        postFollowData();
+    }, [user]);
+
+    const unFollow = async () => {
+        await dispatch(deleteFollow(user.id));
+        await postFollowData();
+    };
+    const follow = async () => {
+        await dispatch(insertFollowing(user.id));
+        await postFollowData();
+    };
     return (
         <Modal isOpen={isOpen} fullscreen toggle={closeModal}>
             <div className="PostsModalHeader">
                 <Button close onClick={closeModal}></Button>{" "}
                 <div>
-                    {user.name}
+                    {clickPost.userName}
                     <strong>게시물</strong>
                 </div>
-                {user.id === myId ? (
+                {clickPost.userId === myId ? (
                     <Button
                         color="danger" //
                         outline
@@ -80,15 +118,26 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete }) => {
                         <div className="PostsBodyHeaderImgBox">
                             <img
                                 className="PostsBodyHeaderImg" //
-                                src={user.img}
+                                src={`http://localhost:8000${clickPost.userImg}`}
                                 alt="userImg"
                             ></img>
                         </div>
-                        {user.name}
+                        {clickPost.userName}
+                        {clickPost.userId === myId ? (
+                            <></>
+                        ) : !isMyFollowing ? (
+                            <Button onClick={follow} outline>
+                                팔로우
+                            </Button>
+                        ) : (
+                            <Button onClick={unFollow} outline>
+                                언팔로우
+                            </Button>
+                        )}
                     </div>
                     <img
                         className="PostsBodyImg"
-                        src={clickPost?.img} //
+                        src={`http://localhost:8000${clickPost?.img}`} //
                         alt="postimg"
                     ></img>
                     <p>{clickPost?.content}</p>

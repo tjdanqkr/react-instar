@@ -1,26 +1,30 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../store/UserContext";
+import { loginCheck } from "../store/users";
 
 const AuthRouter = () => {
-    const { users } = useContext(UserContext);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
     useEffect(() => {
-        const id = localStorage.getItem("id");
-        const findUser = users.find((data) => data.id === Number(id));
-        if (!findUser) {
-            const from =
-                location.pathname === "/login" || location.pathname === "/join" //
-                    ? location.pathname
-                    : "/login";
-            navigate(from);
-        } else {
-            const from = location.pathname || "/";
-            navigate(from === "/login" || from === "/join" ? "/" : from);
-        }
+        loginCheckFunc();
     }, []);
+    const loginCheckFunc = async () => {
+        const isLogin = await dispatch(loginCheck()).unwrap();
+        isLogin ? toGo() : toHome();
+    };
+    const toHome = () => {
+        const from =
+            location.pathname === "/login" || location.pathname === "/join" //
+                ? location.pathname
+                : "/login";
+        navigate(from);
+    };
+    const toGo = () => {
+        const from = location.pathname || "/";
+        navigate(from === "/login" || from === "/join" ? "/" : from);
+    };
     return <></>;
 };
 

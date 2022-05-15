@@ -1,10 +1,14 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Alert, Button, Col, Container, Form, Input, Row } from "reactstrap";
-import { UserContext } from "../../store/UserContext";
+import { selectMyFollower, selectMyFollowing } from "../../store/follows";
+import { selectMyPost } from "../../store/posts";
+import { login } from "../../store/users";
 import AuthRouter from "../AuthRouter";
 import "./Login.css";
 const BootstrapLogin = () => {
+    const dispatch = useDispatch();
     const [isFail, setIsFail] = useState(false);
     const [user, setUser] = useState({
         id: "",
@@ -15,16 +19,16 @@ const BootstrapLogin = () => {
         setUser({ ...user, [name]: value });
     };
     const navigate = useNavigate();
-    const { users } = useContext(UserContext);
-    const onSubmitLogin = (e) => {
+    const onSubmitLogin = async (e) => {
         e.preventDefault();
-        const findUser = users.find((data) => data.userId === user.id && data.password === user.password);
-        if (findUser) {
-            //로그인 후 로직
-            localStorage.setItem("id", findUser.id);
+        const { isLogin } = await dispatch(login(user)).unwrap();
+
+        if (isLogin) {
+            dispatch(selectMyPost());
+            dispatch(selectMyFollower());
+            dispatch(selectMyFollowing());
             navigate("/");
         } else {
-            // 없는 유저 처리
             setIsFail(true);
             setTimeout(() => closeAlert(), 3000);
         }
@@ -33,6 +37,20 @@ const BootstrapLogin = () => {
     const closeAlert = () => {
         setIsFail(false);
     };
+    // const onChange = (e) => {
+
+    //     const file = e.target.files[0];
+    //     let formData = new FormData();
+    //     formData.append("file", file);
+    //     fetch("http://localhost:8000/upload", {
+    //         method: "POST",
+    //         body: formData,
+    //     }).then((res) => {
+    //         if (res.body === "success") {
+    //             document.getElementById("img").src = "/Users/qkrtjdan/Desktop/code/spring_study/logs/local/1.png";
+    //         }
+    //     });
+    // };
     return (
         <div className="LoginPage">
             <Container className="bg-light border">
@@ -48,7 +66,7 @@ const BootstrapLogin = () => {
                                     아이디 또는 비밀번호가 틀렸습니다.
                                 </Alert>
                             ) : null}
-                            <Input type="text" placeholder="ID" name="id" onChange={(e) => onChangeHandler(e)}></Input>
+                            <Input type="text" placeholder="ID" name="userId" onChange={(e) => onChangeHandler(e)}></Input>
                             <Input type="password" placeholder="password" name="password" onChange={(e) => onChangeHandler(e)}></Input>
                             <Button type={"submit"} color="primary" block>
                                 로그인

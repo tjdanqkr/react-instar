@@ -1,14 +1,8 @@
 import { useState } from "react";
-import { Button } from "reactstrap";
+import { Button, Spinner } from "reactstrap";
 import "./ProfileBody.css";
 import ProfileUpdate from "./ProfileUpdate";
-const ProfileBody = ({
-    posts = new Array(5),
-    follower = new Array(5), //
-    following = new Array(5),
-    img = "/img/profile/1.jpeg",
-    name = "park",
-}) => {
+const ProfileBody = ({ posts, follower, following, img, name }) => {
     const [isOpen, setIsOpen] = useState(false);
     const modalClose = () => {
         setIsOpen(false);
@@ -20,21 +14,25 @@ const ProfileBody = ({
         <>
             <div className="profileBodyBox">
                 <div className="profileImgBox">
-                    <img className="profileImg" src={img} alt="myProfileImg"></img>
+                    <img
+                        className="profileImg" //
+                        src={`http://localhost:8000${img}`}
+                        alt="myProfileImg"
+                    ></img>
                 </div>
                 <div className="profileTextBox">
                     <div>
-                        {posts.length}
+                        {posts.loading ? <Spinner>Loading...</Spinner> : posts.posts.length}
                         <br></br>
                         게시물
                     </div>
                     <div>
-                        {follower.length}
+                        {follower.loading ? <Spinner>Loading...</Spinner> : follower.follows.length}
                         <br></br>
                         팔로워
                     </div>
                     <div>
-                        {following.length}
+                        {following.loading ? <Spinner>Loading...</Spinner> : following.follows.length}
                         <br></br>
                         팔로잉
                     </div>
