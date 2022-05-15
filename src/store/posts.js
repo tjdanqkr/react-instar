@@ -42,7 +42,7 @@ export const selectMyPost = createAsyncThunk(
 export const deletePost = createAsyncThunk(
     DELETE_POST, //
     async (payload, thunkAPI) => {
-        await deletePostById(payload);
+        const isDelete = await deletePostById(payload);
     }
 );
 
@@ -68,7 +68,12 @@ export const insertPosts = createAsyncThunk(
         formData.append("file", payload.file);
         await fileUpload("post", "/upload", formData);
         const removeFilePost = { ...payload, file: "", img: `/${payload.file.name}` };
-        await postPost(removeFilePost);
+        const isInsert = await postPost(removeFilePost);
+        console.log(isInsert);
+        if (isInsert === 1) {
+            console.log(isInsert);
+            useDispatch(selectMyPost());
+        }
     }
 );
 export const selectPostMain = createAsyncThunk(

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { GoDiffAdded } from "react-icons/go";
 import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { Button, Container, Input, Modal } from "reactstrap";
-import { insertPosts, selectMyPost } from "../../store/posts";
+import { insertPosts, selectMyPost, selectOtherPost } from "../../store/posts";
 
 const PostsAdd = () => {
+    const location = useLocation();
     const dispatch = useDispatch();
     const [form, setForm] = useState({
         content: "",
@@ -35,9 +37,10 @@ const PostsAdd = () => {
     };
     const onSubmit = async () => {
         await dispatch(insertPosts(form));
-        await dispatch(selectMyPost());
+        await dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
         closeModal();
     };
+
     return (
         <>
             <Button outline onClick={openModal}>

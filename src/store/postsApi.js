@@ -28,7 +28,7 @@ export const getMyPost = async (posts, userId) => {
 
 export const postPost = async (post) => {
     try {
-        const { data } = customAxios("post", "/post", post);
+        const { data } = await customAxios("post", "/post", post);
         return data;
     } catch (error) {
         throw error;
@@ -36,7 +36,8 @@ export const postPost = async (post) => {
 };
 
 export const deletePostById = async (id) => {
-    await customAxios("delete", `/post/${id}`);
+    const { data } = await customAxios("delete", `/post/${id}`);
+    return data;
 };
 export const getPostByOther = async () => {
     try {

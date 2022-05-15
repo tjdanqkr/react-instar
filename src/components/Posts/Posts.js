@@ -29,9 +29,9 @@ const Posts = ({ postState, posts }) => {
         setClickPost();
         setIsOpen(false);
     };
-    const onClickDelete = (postId) => {
-        dispatch(deletePost(postId));
-        dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
+    const onClickDelete = async (postId) => {
+        await dispatch(deletePost(postId));
+        await dispatch(location.pathname === "/profile" ? selectMyPost() : selectOtherPost());
         setIsOpen(false);
     };
 
