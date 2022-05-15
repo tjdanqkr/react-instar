@@ -11,16 +11,17 @@ const Join = () => {
     const [isFail, setIsFail] = useState(false);
     const [text, setText] = useState("");
     const [user, setUser] = useState({
-        id: "",
+        userId: "",
         password: "",
         name: "",
+        img: "",
     });
     const navigate = useNavigate();
     // const { insertUsers, users } = useContext(UserContext);
     const onSubmitLogin = async (e) => {
         e.preventDefault();
         // const findUser = users.find((data) => data.userId === user.id);
-        if (user.id === "") {
+        if (user.userId === "") {
             // id is null
             openAlert("아이디를 입력해주세요");
             return;
@@ -33,16 +34,15 @@ const Join = () => {
             openAlert("이름를 입력해주세요");
             return;
         }
-        const check = await dispatch(getCheckId(user.id)).unwrap();
+        // const check = await dispatch(getCheckId(user.id)).unwrap();
 
-        if (check) {
+        const isInsert = await dispatch(insertUser(user));
+        if (isInsert.error) {
             openAlert("이미 존재하는 아이디");
             return;
-        } else {
-            await dispatch(insertUser(user));
-            await dispatch(login(user));
-            navigate("/");
         }
+        await dispatch(login(user));
+        navigate("/");
     };
 
     const openAlert = (text) => {
@@ -73,7 +73,7 @@ const Join = () => {
                                     {text}
                                 </Alert>
                             ) : null}
-                            <Input type="text" placeholder="ID" name="id" onChange={(e) => onChangeHandler(e)}></Input>
+                            <Input type="text" placeholder="ID" name="userId" onChange={(e) => onChangeHandler(e)}></Input>
                             <Input type="password" placeholder="password" name="password" onChange={(e) => onChangeHandler(e)}></Input>
                             <Input type="text" placeholder="name" name="name" onChange={(e) => onChangeHandler(e)}></Input>
                             <Button type={"submit"} color="primary" block>

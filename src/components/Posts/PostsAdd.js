@@ -9,6 +9,7 @@ const PostsAdd = () => {
     const [form, setForm] = useState({
         content: "",
         img: "/img/post/1.jpeg",
+        file: "",
     });
     const [isOpen, setIsOpen] = useState(false);
     const closeModal = () => {
@@ -23,7 +24,7 @@ const PostsAdd = () => {
         reader.readAsDataURL(file);
         return new Promise((resolve) => {
             reader.onload = () => {
-                setForm({ ...form, img: reader.result });
+                setForm({ ...form, img: reader.result, file });
                 resolve();
             };
         });
@@ -68,7 +69,15 @@ const PostsAdd = () => {
                         ></Input>
                         <label htmlFor="imgUpload">
                             <div className="profileImgBox">
-                                <img className="profileImg" src={form.img} alt="myProfileImg"></img>
+                                <img
+                                    className="profileImg" //
+                                    src={
+                                        form.img?.indexOf("/") //
+                                            ? form.img
+                                            : `http://localhost:8000${form.img}`
+                                    }
+                                    alt="myProfileImg"
+                                ></img>
                             </div>
                         </label>
 

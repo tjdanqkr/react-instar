@@ -21,62 +21,28 @@ const DELETE_FOLLOWING = "DELETE_FOLLOWING";
 const INSERT_FOLLOWING = "INSERT_FOLLOWING";
 const SELECT_MY_FOLLOWING_ONE = "SELECT_MY_FOLLOWING_ONE";
 export const selectMyFollower = createAsyncThunk(SELECT_MY_FOLLOWER, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    const { follows } = thunkAPI.getState().follows;
-    if (myId) {
-        const myfollows = await getFollowerByMe(follows, Number(myId));
-        return myfollows;
-    } else if (myId === 0 || myId === "0") {
-        const myfollows = await getFollowerByMe(follows, Number(myId));
-        return myfollows;
-    }
-    return;
+    const myfollows = await getFollowerByMe();
+    return myfollows;
 });
 
 export const selectMyFollowing = createAsyncThunk(SELECT_MY_FOLLOWERING, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    const { follows } = thunkAPI.getState().follows;
-    if (myId) {
-        const myfollows = await getFollowingByMe(follows, Number(myId));
-        return myfollows;
-    } else if (myId === 0 || myId === "0") {
-        const myfollows = await getFollowingByMe(follows, Number(myId));
-        return myfollows;
-    }
-    return;
+    const myfollows = await getFollowingByMe();
+    return myfollows;
 });
 
 export const deleteFollow = createAsyncThunk(DELETE_FOLLOWING, async (payload, thunkAPI) => {
-    const { follows } = thunkAPI.getState().follows;
-    const { myId } = thunkAPI.getState().users;
-    return await deleteFollowing(follows, Number(myId), payload);
+    return await deleteFollowing(payload);
 });
 
 export const insertFollowing = createAsyncThunk(INSERT_FOLLOWING, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    if (myId) {
-        const myfollows = await postFollower(Number(myId), payload);
-        return myfollows;
-    } else if (myId === 0 || myId === "0") {
-        const myfollows = await postFollower(Number(myId), payload);
-        return myfollows;
-    } else {
-        return;
-    }
+    const myfollows = await postFollower(payload);
+    return myfollows;
 });
 export const selectMyFollowingOne = createAsyncThunk(SELECT_MY_FOLLOWING_ONE, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    const { follows } = thunkAPI.getState().follows;
     const userId = payload;
-    if (myId) {
-        const myfollows = await getFollowingByMeOne(follows, Number(myId), userId);
-        return myfollows ? true : false;
-    } else if (myId === 0 || myId === "0") {
-        const myfollows = await getFollowingByMeOne(follows, Number(myId), userId);
-        return myfollows ? true : false;
-    } else {
-        return;
-    }
+
+    const myfollows = await getFollowingByMeOne(userId);
+    return myfollows ? true : false;
 });
 
 export const followsSlice = createSlice({
@@ -85,19 +51,19 @@ export const followsSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(insertFollowing.fulfilled, (state, { payload }) => {
-                const newFollows = [...state.follows, payload];
-                return { ...state, follows: newFollows };
-            })
-            .addCase(insertFollowing.rejected, (state, { error }) => {
-                return { ...state };
-            })
-            .addCase(deleteFollow.fulfilled, (state, { payload }) => {
-                return { ...state, follows: payload };
-            })
-            .addCase(deleteFollow.rejected, (state, { error }) => {
-                return { ...state };
-            })
+            // .addCase(insertFollowing.fulfilled, (state, { payload }) => {
+            //     const newFollows = [...state.follows, payload];
+            //     return { ...state, follows: newFollows };
+            // })
+            // .addCase(insertFollowing.rejected, (state, { error }) => {
+            //     return { ...state };
+            // })
+            // .addCase(deleteFollow.fulfilled, (state, { payload }) => {
+            //     return { ...state, follows: payload };
+            // })
+            // .addCase(deleteFollow.rejected, (state, { error }) => {
+            //     return { ...state };
+            // })
             .addCase(selectMyFollower.pending, (state, { payload }) => {
                 const newMyFollower = { ...state.myFollower };
                 newMyFollower.loading = true;

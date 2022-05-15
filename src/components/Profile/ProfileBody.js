@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Spinner } from "reactstrap";
 import "./ProfileBody.css";
 import ProfileUpdate from "./ProfileUpdate";
-const ProfileBody = ({ posts, follower, following, img = "/img/profile/1.jpeg", name = "park" }) => {
+const ProfileBody = ({ posts, follower, following, img, name }) => {
     const [isOpen, setIsOpen] = useState(false);
     const modalClose = () => {
         setIsOpen(false);
@@ -14,7 +14,11 @@ const ProfileBody = ({ posts, follower, following, img = "/img/profile/1.jpeg", 
         <>
             <div className="profileBodyBox">
                 <div className="profileImgBox">
-                    <img className="profileImg" src={img} alt="myProfileImg"></img>
+                    <img
+                        className="profileImg" //
+                        src={`http://localhost:8000${img}`}
+                        alt="myProfileImg"
+                    ></img>
                 </div>
                 <div className="profileTextBox">
                     <div>

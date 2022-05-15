@@ -1,52 +1,45 @@
-export const postFollower = async (myId, userId) => {
-    try {
-        const newFollower = await { follower: myId, following: userId };
-        return newFollower;
-    } catch (error) {
-        throw error;
-    }
-};
-export const deleteFollowing = async (follows, myId, userId) => {
-    try {
-        const delPosts = await follows.filter(
-            (
-                follow //
-            ) => !(follow.follower === myId && follow.following === userId)
-        );
+import { customAxios } from "../http/customAxios";
 
-        return delPosts;
-    } catch (error) {
-        throw error;
-    }
-};
-export const getFollowerByMe = async (follows, myId) => {
+export const postFollower = async (userId) => {
     try {
-        const findFollowerByMe = await follows.filter((follow) => follow.following === myId);
-        return findFollowerByMe;
+        // const newFollower = await { follower: myId, following: userId };
+        const { data } = await customAxios("post", `/follow/${userId}`);
+        return data;
     } catch (error) {
         throw error;
     }
 };
+export const deleteFollowing = async (userId) => {
+    try {
+        const { data } = await customAxios("delete", `/follow/${userId}`);
 
-export const getFollowingByMe = async (follows, myId) => {
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+export const getFollowerByMe = async () => {
     try {
-        const findFollowingByMe = await follows.filter((follow) => follow.follower === myId);
-        return findFollowingByMe;
+        const { data } = await customAxios("get", "/follow/my/follower");
+        return data;
     } catch (error) {
         throw error;
     }
 };
 
-export const getFollowingByMeOne = async (follows, myId, userId) => {
+export const getFollowingByMe = async () => {
     try {
-        const findFollowingByMe = await follows.find(
-            (
-                follow //
-            ) => {
-                return follow.following === userId && follow.follower === myId;
-            }
-        );
-        return findFollowingByMe;
+        const { data } = await customAxios("get", "/follow/my/following");
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getFollowingByMeOne = async (userId) => {
+    try {
+        const { data } = await customAxios("get", `/follow/follower/${userId}`);
+        return data.length === 0 ? false : true;
     } catch (error) {
         throw error;
     }

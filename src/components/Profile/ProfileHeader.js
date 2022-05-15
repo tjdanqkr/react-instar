@@ -5,7 +5,6 @@ import { GoDiffAdded } from "react-icons/go";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, Input, Modal } from "reactstrap";
-import { insertPosts, selectMyPost } from "../../store/posts";
 import { logout } from "../../store/users";
 import PostsAdd from "../Posts/PostsAdd";
 import "./ProfileHeader.css";

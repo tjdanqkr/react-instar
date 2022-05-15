@@ -49,7 +49,7 @@ const Posts = ({ postState, posts }) => {
                         <img
                             className="PostsImg" //
                             key={post.id}
-                            src={post.img}
+                            src={`http://localhost:8000${post.img}`}
                             alt={post.content}
                         ></img>
                     </div>
@@ -77,7 +77,6 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
         dispatch(selectMyFollowingOne(user.id))
             .unwrap()
             .then((res) => {
-                console.log(res);
                 setIsMyFollowing(res);
             });
     };
@@ -98,10 +97,10 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
             <div className="PostsModalHeader">
                 <Button close onClick={closeModal}></Button>{" "}
                 <div>
-                    {user.name}
+                    {clickPost.userName}
                     <strong>게시물</strong>
                 </div>
-                {user.id === myId ? (
+                {clickPost.userId === myId ? (
                     <Button
                         color="danger" //
                         outline
@@ -119,12 +118,12 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
                         <div className="PostsBodyHeaderImgBox">
                             <img
                                 className="PostsBodyHeaderImg" //
-                                src={user.img}
+                                src={`http://localhost:8000${clickPost.userImg}`}
                                 alt="userImg"
                             ></img>
                         </div>
-                        {user.name}
-                        {user.id === myId ? (
+                        {clickPost.userName}
+                        {clickPost.userId === myId ? (
                             <></>
                         ) : !isMyFollowing ? (
                             <Button onClick={follow} outline>
@@ -138,7 +137,7 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
                     </div>
                     <img
                         className="PostsBodyImg"
-                        src={clickPost?.img} //
+                        src={`http://localhost:8000${clickPost?.img}`} //
                         alt="postimg"
                     ></img>
                     <p>{clickPost?.content}</p>

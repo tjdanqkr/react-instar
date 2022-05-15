@@ -1,6 +1,9 @@
+import { customAxios } from "../http/customAxios";
+
 export const getUserById = async (users, id) => {
-    const findUserById = await users.find((user) => user.id === id);
-    return findUserById;
+    // const findUserById = await users.find((user) => user.id === id);
+    const { data } = await customAxios("get", `/user/${id}`);
+    return data;
 };
 
 export const getUserByUserId = async (users, userId) => {
@@ -13,13 +16,18 @@ export const getUserByKey = async (users, key) => {
 };
 
 export const postUser = async (users, user) => {
-    const newUser = { ...user, userId: user.id, id: users.length };
-    return [...users, newUser];
+    const { status } = await customAxios("post", "/user/join", user);
+    if (status !== 201) {
+        throw new Error("error");
+    }
+
+    // return [...users, newUser];
 };
 
 export const loginApi = async (users, user) => {
-    const checkUser = await users.find((data) => data.userId === user.id && data.password === user.password);
-    return { isLogin: checkUser ? true : false, user: checkUser };
+    const { data } = await customAxios("post", "/user/login", user);
+
+    return { isLogin: data.token ? true : false, user: data.user, token: data.token };
 };
 
 export const checkId = async (users, userId) => {
@@ -31,13 +39,8 @@ export const logoutApi = async (userId) => {
     return true;
 };
 export const putUsers = async (users, user, id) => {
-    const findUsersIndex = await users.findIndex((user) => user.id === id);
-    const { name, img } = user;
-    if (findUsersIndex === -1) {
-        console.error("not found");
-        return;
+    const { data } = await customAxios("put", `/user`, user);
+    if (data) {
+        return user;
     }
-    const newUsers = [...users];
-    newUsers.splice(findUsersIndex, 1, { ...users[findUsersIndex], name, img });
-    return newUsers;
 };

@@ -50,7 +50,7 @@ const MainCard = ({ post }) => {
                 <div className="PostsBodyHeaderImgBox">
                     <img
                         className="PostsBodyHeaderImg" //
-                        src={post.userImg}
+                        src={`http://localhost:8000${post?.userImg}`}
                         alt="userImg"
                     ></img>
                 </div>
@@ -58,7 +58,7 @@ const MainCard = ({ post }) => {
             </div>
             <img
                 className="PostsBodyImg"
-                src={post?.img} //
+                src={`http://localhost:8000${post?.img}`} //
                 alt="postimg"
             ></img>
             <p>{post?.content}</p>

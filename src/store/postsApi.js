@@ -1,7 +1,9 @@
+import { customAxios } from "../http/customAxios";
+
 export const getPostById = async (posts, id) => {
     try {
-        const findPostById = await posts.filter((post) => post.id === id);
-        return findPostById;
+        const { data } = await customAxios("get", `/post/${id}`);
+        return data;
     } catch (error) {
         throw error;
     }
@@ -9,31 +11,37 @@ export const getPostById = async (posts, id) => {
 
 export const getPostByUserId = async (posts, userId) => {
     try {
-        const findPostsByUserId = await posts.filter((post) => post.userId === userId);
-
-        return findPostsByUserId;
+        const { data } = await customAxios("get", `/post/user/${userId}`);
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+export const getMyPost = async (posts, userId) => {
+    try {
+        const { data } = await customAxios("get", `/post/my`);
+        return data;
     } catch (error) {
         throw error;
     }
 };
 
-export const postPost = async (posts, post) => {
+export const postPost = async (post) => {
     try {
-        const newPost = { ...post, id: posts.length };
-        return [...posts, newPost];
+        const { data } = customAxios("post", "/post", post);
+        return data;
     } catch (error) {
         throw error;
     }
 };
 
-export const deletePostById = async (posts, id) => {
-    const delPosts = await posts.filter((post) => post.id !== id);
-    return [...delPosts];
+export const deletePostById = async (id) => {
+    await customAxios("delete", `/post/${id}`);
 };
-export const getPostByOther = async (posts, userId) => {
+export const getPostByOther = async () => {
     try {
-        const findPostsByUserId = await posts.filter((post) => post.userId !== userId);
-        return findPostsByUserId;
+        const { data } = await customAxios("get", "/post/other");
+        return data;
     } catch (error) {
         throw error;
     }
@@ -41,44 +49,27 @@ export const getPostByOther = async (posts, userId) => {
 
 export const putPost = async (posts, post, id) => {
     try {
-        const findPostIndex = await posts.findIndex((post) => post.id === id);
-        const { content, img } = post;
-        if (findPostIndex === -1) {
-            return new Error("index not found");
-        }
-        const newposts = [...posts];
-        newposts.splice(findPostIndex, 1, { ...posts[findPostIndex], content, img });
-        return newposts;
+        const { data } = await customAxios("put", `/post/${id}`, post);
+
+        return data;
     } catch (error) {
         throw error;
     }
 };
 
-export const getPostByKey = async (posts, key, userId) => {
+export const getPostByKey = async (key) => {
     try {
-        const findPostsByUserId = await posts.filter(
-            (
-                post //
-            ) => userId === post.userId || key.test(post.content)
-        );
-        return findPostsByUserId;
+        const { data } = await customAxios("get", `/post/key/${key}`);
+        return data;
     } catch (error) {
         throw error;
     }
 };
 
-export const getPostMain = async (posts, follows, users) => {
+export const getPostMain = async () => {
     try {
-        const filterPostMain = await posts.filter(
-            (
-                { userId } //
-            ) => follows.every(({ following }) => userId !== following)
-        );
-        const joinPostMain = await filterPostMain.map((post) => {
-            const user = users.find((user) => user.id === post.userId);
-            return { ...post, userName: user.name, userImg: user.img };
-        });
-        return joinPostMain;
+        const { data } = await customAxios("get", "/post/following");
+        return data;
     } catch (error) {
         throw error;
     }

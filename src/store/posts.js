@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { Post } from "../data/Post";
+import { fileUpload } from "../http/customAxios";
 import { selectMyFollower, selectMyFollowing } from "./follows";
-import { deletePostById, getPostByKey, getPostByOther, getPostByUserId, getPostMain, postPost } from "./postsApi";
+import { deletePostById, getMyPost, getPostByKey, getPostByOther, getPostByUserId, getPostMain, postPost } from "./postsApi";
 const initialState = {
     posts: Post,
     myPosts: {
@@ -30,67 +31,53 @@ const INSERT_POST = "INSERT_POST";
 const SELECT_POST_BY_KEY = "SELECT_POST_BY_KEY";
 const SELECT_POST_MAIN = "SELECT_POST_MAIN";
 
-export const selectMyPost = createAsyncThunk(SELECT_MY_POST, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    const { posts } = thunkAPI.getState().posts;
-    if (myId) {
-        const myPosts = await getPostByUserId(posts, Number(myId));
-        return myPosts;
-    } else if (myId === 0 || myId === "0") {
-        const myPosts = await getPostByUserId(posts, Number(myId));
+export const selectMyPost = createAsyncThunk(
+    SELECT_MY_POST, //
+    async (payload, thunkAPI) => {
+        const myPosts = await getMyPost();
         return myPosts;
     }
-    return;
-});
+);
 
-export const deletePost = createAsyncThunk(DELETE_POST, async (payload, thunkAPI) => {
-    const { posts } = thunkAPI.getState().posts;
+export const deletePost = createAsyncThunk(
+    DELETE_POST, //
+    async (payload, thunkAPI) => {
+        await deletePostById(payload);
+    }
+);
 
-    return deletePostById(posts, payload);
-});
-
-export const selectOtherPost = createAsyncThunk(SELECT_OTHER_POST, async (payload, thunkAPI) => {
-    const { myId } = thunkAPI.getState().users;
-    const { posts } = thunkAPI.getState().posts;
-    if (myId) {
-        const myPosts = await getPostByOther(posts, Number(myId));
-        return myPosts;
-    } else if (myId === 0 || myId === "0") {
-        const myPosts = await getPostByOther(posts, Number(myId));
+export const selectOtherPost = createAsyncThunk(
+    SELECT_OTHER_POST, //
+    async (payload, thunkAPI) => {
+        const myPosts = await getPostByOther();
         return myPosts;
     }
-    return;
-});
+);
 
 export const selectPostsByKey = createAsyncThunk(
     SELECT_POST_BY_KEY, //
-    async ({ searchKey, userId }, thunkAPI) => {
-        const reg = new RegExp(searchKey, "g");
-        const { posts } = thunkAPI.getState().posts;
-        const myPosts = await getPostByKey(posts, reg, userId);
+    async ({ searchKey }, thunkAPI) => {
+        const myPosts = await getPostByKey(searchKey);
         return myPosts;
     }
 );
 export const insertPosts = createAsyncThunk(
     INSERT_POST, //
     async (payload, thunkAPI) => {
-        const { myId } = thunkAPI.getState().users;
-        const { posts } = thunkAPI.getState().posts;
-
-        const { content, img } = payload;
-        const post = { content, img, userId: Number(myId) };
-        const myPosts = await postPost(posts, post);
+        let formData = new FormData();
+        formData.append("file", payload.file);
+        await fileUpload("post", "/upload", formData);
+        const removeFilePost = { ...payload, file: "", img: `/${payload.file.name}` };
+        await postPost(removeFilePost);
+    }
+);
+export const selectPostMain = createAsyncThunk(
+    SELECT_POST_MAIN, //
+    async (payload, thunkAPI) => {
+        const myPosts = await getPostMain();
         return myPosts;
     }
 );
-export const selectPostMain = createAsyncThunk(SELECT_POST_MAIN, async (payload, thunkAPI) => {
-    const { posts } = thunkAPI.getState().posts;
-    const { follows } = thunkAPI.getState().follows.myFollower;
-    const { users } = thunkAPI.getState().users;
-
-    const myPosts = await getPostMain(posts, follows, users);
-    return myPosts;
-});
 
 export const postsSlice = createSlice({
     name: "posts",
@@ -120,9 +107,7 @@ export const postsSlice = createSlice({
                 newMyPosts.message = error.message;
                 return { ...state, myPosts: newMyPosts };
             })
-            .addCase(deletePost.fulfilled, (state, { payload }) => {
-                return { ...state, posts: payload };
-            })
+
             .addCase(selectOtherPost.pending, (state, { payload }) => {
                 const newOtherPosts = { ...state.otherPosts };
                 newOtherPosts.loading = true;
@@ -167,9 +152,7 @@ export const postsSlice = createSlice({
                 newOtherPosts.message = error.message;
                 return { ...state, otherPosts: newOtherPosts };
             })
-            .addCase(insertPosts.fulfilled, (state, { payload }) => {
-                return { ...state, posts: payload };
-            })
+
             .addCase(selectPostMain.pending, (state, { payload }) => {
                 const mainPosts = { ...state.mainPosts };
                 mainPosts.loading = true;
