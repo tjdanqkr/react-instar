@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { Post } from "../data/Post";
 import { fileUpload } from "../http/customAxios";
-import { selectMyFollower, selectMyFollowing } from "./follows";
 import { deletePostById, getMyPost, getPostByKey, getPostByOther, getPostByUserId, getPostMain, postPost } from "./postsApi";
 const initialState = {
     posts: Post,
