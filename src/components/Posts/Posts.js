@@ -74,7 +74,7 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
     const dispatch = useDispatch();
     const [isMyFollowing, setIsMyFollowing] = useState(false);
     const postFollowData = () => {
-        dispatch(selectMyFollowingOne(user.id))
+        dispatch(selectMyFollowingOne(clickPost.userId))
             .unwrap()
             .then((res) => {
                 setIsMyFollowing(res);
@@ -82,14 +82,14 @@ const PostDetail = ({ isOpen, clickPost, closeModal, onClickDelete, user }) => {
     };
     useEffect(() => {
         postFollowData();
-    }, [user]);
+    }, [clickPost]);
 
     const unFollow = async () => {
-        await dispatch(deleteFollow(user.id));
+        await dispatch(deleteFollow(clickPost.userId));
         await postFollowData();
     };
     const follow = async () => {
-        await dispatch(insertFollowing(user.id));
+        await dispatch(insertFollowing(clickPost.userId));
         await postFollowData();
     };
     return (
