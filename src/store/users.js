@@ -64,9 +64,11 @@ export const logout = createAsyncThunk(LOGOUT, async (payload, thunkAPI) => {
 export const updateUsers = createAsyncThunk(UPDATE_USERS, async (user, thunkAPI) => {
     const { myId, users } = thunkAPI.getState().users;
     let formData = new FormData();
-    formData.append("file", user.file);
-    await fileUpload("post", "/upload", formData);
-    const removeFileUser = { ...user, file: "", img: `/${user.file.name}` };
+    if (user.file) {
+        formData.append("file", user.file);
+        await fileUpload("post", "/upload", formData);
+    }
+    const removeFileUser = { ...user, file: "", img: user.file ? `/img/${user.file.name}` : user.img };
     await putUsers(users, removeFileUser, myId);
     return { removeFileUser };
 });

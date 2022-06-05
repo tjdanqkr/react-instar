@@ -66,11 +66,9 @@ export const insertPosts = createAsyncThunk(
         let formData = new FormData();
         formData.append("file", payload.file);
         await fileUpload("post", "/upload", formData);
-        const removeFilePost = { ...payload, file: "", img: `/${payload.file.name}` };
+        const removeFilePost = { ...payload, file: "", img: `/img/${payload.file.name}` };
         const isInsert = await postPost(removeFilePost);
-        console.log(isInsert);
         if (isInsert === 1) {
-            console.log(isInsert);
             useDispatch(selectMyPost());
         }
     }
